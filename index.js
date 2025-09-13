@@ -67,9 +67,12 @@ exports.addMessagePort = async function (port, senderId) {
   }
   port.start();
 };
-
+function onVoiceChannelActionMessage(post, data){
+  console.log(post, data)
+}
 exports.sendMessage = async function (args) {
   let type = args[0];
+  console.log(args[1])
   if (type === "input") {
     let vol = Number(args[1]);
     print("macos volume change", vol);

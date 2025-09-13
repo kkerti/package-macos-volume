@@ -6,14 +6,6 @@
   let clientSecret = "";
   let clientStatus = "";
 
-  //Capitalize first letter
-  $: clientStatusLabel = String(clientStatus).charAt(0).toUpperCase() + String(clientStatus).slice(1)
-  $: clientStatusIconColor = {
-    "authorize" : "#4f4f4f",
-    "error" : "#fb2323",
-    "connected" : "#00D248" 
-  }[clientStatus]
-
   // @ts-ignore
   const messagePort = createPackageMessagePort("package-macos-volume", "preference");
 

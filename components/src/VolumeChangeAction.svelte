@@ -2,7 +2,6 @@
 <script>
   import { MeltCombo } from "@intechstudio/grid-uikit";
   import { onMount } from "svelte";
-  let targetType = "";
   let inputValue = "";
   let currentCodeValue = "";
   let isConfigured = false;
@@ -28,8 +27,8 @@
     ref.dispatchEvent(event);
   });
 
-  $: targetType, inputValue, isConfigured && function() {
-    var code = `gps("package-macos-volume", "${targetType}", ${inputValue})`;
+  $: inputValue, isConfigured && function() {
+    var code = `gps("package-macos-volume", ${inputValue})`;
     if (currentCodeValue != code){
         currentCodeValue = code;    
         const event = new CustomEvent("updateCode", {
