@@ -8,13 +8,13 @@
   let ref;
 
   function handleConfigUpdate(config) {
-    const regex = /^gps\("package-macos-volume", (.*?)\)$/;
+    const regex = /^gps\("package-macos-volume", "input", (.*?)\)$/;
 
     const match = config.script.match(regex);
 
     if (currentCodeValue != config.script){
         currentCodeValue = config.script;
-        inputValue = match[1];
+        inputValue = match ? match[1] : "";
         isConfigured = true;
     }
   }
@@ -28,7 +28,7 @@
   });
 
   $: inputValue, isConfigured && function() {
-    var code = `gps("package-macos-volume", ${inputValue})`;
+    var code = `gps("package-macos-volume", "input", ${inputValue})`;
     if (currentCodeValue != code){
         currentCodeValue = code;    
         const event = new CustomEvent("updateCode", {
