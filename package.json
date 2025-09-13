@@ -1,0 +1,35 @@
+{
+  "name": "package-macos-volume",
+  "version": "1.0.0",
+  "description": "MacOS volume",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "prettier --write .",
+    "install:patch": "patch-package",
+    "install:components": "cd ./components && npm install",
+    "build:components": "cd ./components && npm run build",
+    "dev:components": "cd ./components && npm run dev",
+    "postinstall": "run-p install:*",
+    "build": "run-p build:*",
+    "dev": "run-p dev:*"
+  },
+  "author": "intechstudio",
+  "license": "ISC",
+  "grid_editor": {
+    "componentsPath": "components/dist/components.js",
+    "preferenceComponent": "macos-volume-preference",
+    "shortDescription": "Change main volume on macos",
+    "mainIcon": "",
+    "menuIcon": ""
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "patch-package": "^8.0.0",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^3.5.3",
+    "prettier-plugin-svelte": "^3.3.3"
+  }
+}
