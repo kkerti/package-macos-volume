@@ -78,80 +78,125 @@ function onPreferenceMessage(data) {
   console.log("Preference message:", data);
 }
 
+// Update the exports.sendMessage function
 exports.sendMessage = async function (args) {
   let type = args[0];
   if (type === "input") {
     let vol = Number(args[1]);
-    setVolumeThrottled(vol)
+    setVolumeQueued(vol);
   }
 };
 
+let isProcessing = false;
+let latestVolume = null;
 
-let volumeTimeout = null;
-let pendingVolume = null;
-let isVolumeChanging = false;
-let lastVolumeChange = 0;
-let lastVolumeValue = -1;
-
-function setVolumeThrottled(vol) {
-  pendingVolume = vol;
+function setVolumeQueued(vol) {
+  const clampedVol = Math.max(0, Math.min(100, vol));
   
-  const now = Date.now();
-  const timeSinceLastChange = now - lastVolumeChange;
-  const minInterval = 50; // Minimum 100ms between actual volume changes
+  // Always store the latest volume
+  latestVolume = clampedVol;
   
-  console.log("lastVolumeChange",lastVolumeChange);
-  if (!isVolumeChanging && timeSinceLastChange >= minInterval) {
-    // Execute immediately if enough time has passed
-    executeVolumeChange();
-  } else if (!volumeTimeout) {
-    // Schedule the next change if one isn't already scheduled
-    const delay = Math.max(0, minInterval - timeSinceLastChange);
-    volumeTimeout = setTimeout(executeVolumeChange, delay);
+  // Start processing if not already processing
+  if (!isProcessing) {
+    processLatestVolume();
   }
 }
 
-function executeVolumeChange() {
-  if (pendingVolume === null) return;
-  
-  isVolumeChanging = true;
-  lastVolumeChange = Date.now();
-  
-  // Clear timeout as we're executing now
-  if (volumeTimeout) {
-    clearTimeout(volumeTimeout);
-    volumeTimeout = null;
+function processLatestVolume() {
+  if (latestVolume === null) {
+    isProcessing = false;
+    return;
   }
   
-  const clampedVol = Math.max(0, Math.min(100, pendingVolume));
-  const command = `osascript -e "set volume output volume ${clampedVol}"`;
+  isProcessing = true;
+  const vol = latestVolume;
+  latestVolume = null; // Clear it immediately
   
-  if(lastVolumeValue !== clampedVol){
-    lastVolumeValue = clampedVol;
-    exec(command, { timeout: 2000 }, (error, stdout, stderr) => {
-      isVolumeChanging = false;
-      
-      if (error) {
-        console.error(`Error setting volume: ${error.message}`);
-      } else if (stderr) {
-        console.error(`stderr: ${stderr}`);
-      } else {
-        console.log(`Volume successfully set to ${clampedVol}`);
-      }
+  const command = `osascript -e "set volume output volume ${vol}"`;
+  
+  exec(command, { timeout: 2000 }, (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Error setting volume: ${error.message}`);
+    } else if (stderr) {
+      console.error(`stderr: ${stderr}`);
+    } else {
+      console.log(`Volume set to ${vol}`);
+    }
+    
+    // Check if there's a newer volume to process
+    if (latestVolume !== null) {
+      processLatestVolume();
+    } else {
+      isProcessing = false;
+    }
+  });
+}
 
+
+
+// let volumeTimeout = null;
+// let pendingVolume = null;
+// let isVolumeChanging = false;
+// let lastVolumeChange = 0;
+// let lastVolumeValue = -1;
+// function setVolumeThrottled(vol) {
+//   pendingVolume = vol;
+  
+//   const now = Date.now();
+//   const timeSinceLastChange = now - lastVolumeChange;
+//   const minInterval = 250; // Minimum 100ms between actual volume changes
+  
+//   console.log("lastVolumeChange",lastVolumeChange);
+//   if (!isVolumeChanging && timeSinceLastChange >= minInterval) {
+//     // Execute immediately if enough time has passed
+//     executeVolumeChange();
+//   } else if (!volumeTimeout) {
+//     // Schedule the next change if one isn't already scheduled
+//     const delay = Math.max(0, minInterval - timeSinceLastChange);
+//     volumeTimeout = setTimeout(executeVolumeChange, delay);
+//   }
+// }
+
+// function executeVolumeChange() {
+//   if (pendingVolume === null) return;
+  
+//   isVolumeChanging = true;
+//   lastVolumeChange = Date.now();
+  
+//   // Clear timeout as we're executing now
+//   if (volumeTimeout) {
+//     clearTimeout(volumeTimeout);
+//     volumeTimeout = null;
+//   }
+  
+//   const clampedVol = Math.max(0, Math.min(100, pendingVolume));
+//   const command = `osascript -e "set volume output volume ${clampedVol}"`;
+  
+//   if(lastVolumeValue !== clampedVol){
+//     lastVolumeValue = clampedVol;
+//     exec(command, { timeout: 5000 }, (error, stdout, stderr) => {
+//       isVolumeChanging = false;
       
-      // Check if there's a newer pending volume to apply
-      if (pendingVolume !== clampedVol && pendingVolume !== null) {
-        const now = Date.now();
-        const timeSinceLastChange = now - lastVolumeChange;
-        const minInterval = 50;
+//       if (error) {
+//         console.error(`Error setting volume: ${error.message}`);
+//       } else if (stderr) {
+//         console.error(`stderr: ${stderr}`);
+//       } else {
+//         console.log(`Volume successfully set to ${clampedVol}`);
+//       }
+    
+//       // Check if there's a newer pending volume to apply
+//       if (pendingVolume !== clampedVol && pendingVolume !== null) {
+//         const now = Date.now();
+//         const timeSinceLastChange = now - lastVolumeChange;
+//         const minInterval = 100;
         
-        if (timeSinceLastChange >= minInterval) {
-          executeVolumeChange();
-        } else {
-          volumeTimeout = setTimeout(executeVolumeChange, minInterval - timeSinceLastChange);
-        }
-      }
-    });
-  }
-}
+//         if (timeSinceLastChange >= minInterval) {
+//           executeVolumeChange();
+//         } else {
+//           volumeTimeout = setTimeout(executeVolumeChange, minInterval - timeSinceLastChange);
+//         }
+//       }
+//     });
+//   }
+// }
