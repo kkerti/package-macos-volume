@@ -30,6 +30,9 @@ cd components && npm install
 
 6. Current advise is to clone the Grid Editor app as well, and open both the Editor and the package in your code editor. As of today in Editor version 1.6.0, the logs of the package is only visible when you run the Editor from source and look at the terminal logs.
 
+> [!CAUTION]
+> Uninstalling the package from the package manager, will delete the actual files and essentially your code from `grid-userdata/packages`. **Make sure you save your work, commit to git or copy the folder somewhere else before uninstalling the package.**
+
 ## Know-how
 
 To release a package be able to share it with others, you need to build a zip package from it. It's best to do that based on the `.github/workflows/main.yml` file.
@@ -38,5 +41,5 @@ To release a package be able to share it with others, you need to build a zip pa
 
 You will need to enable the workflow to write packages on your repository in the Github settings menu.
 
-![enable writing](guide/workflow-permissions.png)
+![enable writing](guide/workflow-permissons.png)
 ...
