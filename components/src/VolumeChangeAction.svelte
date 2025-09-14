@@ -50,7 +50,7 @@
     <div class="" style="width: 100%;">
       <MeltCombo
         bind:value={inputValue}
-        title="Value" />
+        title="Value to pass for volume change (0-100!)" />
     </div>
   </div>
 </volume-control>

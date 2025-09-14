@@ -10,10 +10,6 @@ let preferencePort = undefined;
 exports.loadPackage = async function (gridController, persistedData) {
   controller = gridController;
 
-  // let discordIconSvg = fs.readFileSync(
-  //   path.resolve(__dirname, "discord-logo-black.svg"),
-  //   { encoding: "utf-8" },
-  // );
 
   controller.sendMessageToEditor({
     type: "add-action",

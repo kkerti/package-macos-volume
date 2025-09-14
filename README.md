@@ -1,9 +1,9 @@
-# Discord Package
+# MacOS System Volume Demo Package
 
 ...
 
-> [!NOTE]  
-> Usage guide is [found here](/guide/app_guide.md).
+> [!WARNING]  
+> Careful with this demo package. Sudden audio jumps may occur. Make sure you lower app volumes and avoid using headphones.
 
 ## Overview
 
