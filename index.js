@@ -52,7 +52,7 @@ exports.unloadPackage = async function () {
 
 exports.addMessagePort = async function (port, senderId) {
   messagePorts.add(port);
-  console.log("hi")
+  console.log("hi");
   port.on("close", () => {
     messagePorts.delete(port);
   });
@@ -70,8 +70,8 @@ exports.addMessagePort = async function (port, senderId) {
   port.start();
 };
 
-function onVolumeChangeActionMessage(port, data){
-  console.log("onVolumeChangeActionMessage:", data)
+function onVolumeChangeActionMessage(port, data) {
+  console.log("onVolumeChangeActionMessage:", data);
 }
 
 function onPreferenceMessage(data) {
@@ -92,10 +92,10 @@ let latestVolume = null;
 
 function setVolumeQueued(vol) {
   const clampedVol = Math.max(0, Math.min(100, vol));
-  
+
   // Always store the latest volume
   latestVolume = clampedVol;
-  
+
   // Start processing if not already processing
   if (!isProcessing) {
     processLatestVolume();
@@ -107,13 +107,13 @@ function processLatestVolume() {
     isProcessing = false;
     return;
   }
-  
+
   isProcessing = true;
   const vol = latestVolume;
   latestVolume = null; // Clear it immediately
-  
+
   const command = `osascript -e "set volume output volume ${vol}"`;
-  
+
   exec(command, { timeout: 2000 }, (error, stdout, stderr) => {
     if (error) {
       console.error(`Error setting volume: ${error.message}`);
@@ -122,7 +122,7 @@ function processLatestVolume() {
     } else {
       console.log(`Volume set to ${vol}`);
     }
-    
+
     // Check if there's a newer volume to process
     if (latestVolume !== null) {
       processLatestVolume();
