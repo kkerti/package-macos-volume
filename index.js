@@ -10,7 +10,6 @@ let preferencePort = undefined;
 exports.loadPackage = async function (gridController, persistedData) {
   controller = gridController;
 
-
   controller.sendMessageToEditor({
     type: "add-action",
     info: {

@@ -3,7 +3,7 @@ name: Build and Upload Artifact
 on:
   push:
     branches:
-      - main  # Adjust the branch name if needed
+      - main # Adjust the branch name if needed
 
 jobs:
   read-package-json:
@@ -13,12 +13,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-        
+
       - name: Read package.json
         id: save_output
         run: |
           echo "version=$(jq -r '.version' package.json)" >> "$GITHUB_OUTPUT"
-        
+
   create-github-release:
     needs: [read-package-json]
     runs-on: ubuntu-latest
@@ -48,14 +48,14 @@ jobs:
         run: |
           echo "upload_url=${{ steps.create_release.outputs.upload_url  }}" >> "$GITHUB_OUTPUT"
           echo "release_id=${{ steps.create_release.outputs.id  }}" >> "$GITHUB_OUTPUT"
-  
+
   build:
     runs-on: ${{ matrix.os }}
-    needs: create-github-release 
+    needs: create-github-release
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-#        os: [macos-latest]
+    #        os: [macos-latest]
 
     steps:
       - name: Checkout code
@@ -64,23 +64,23 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18  # Specify the desired Node.js version
+          node-version: 18 # Specify the desired Node.js version
 
       - name: Install dependencies
         run: npm ci
-        
+
       - name: Build components
-        run: | 
+        run: |
           cd components
           npm ci
           npm run build
 
       - name: Install archiver package
         run: npm install archiver
-        
+
       - name: Run build script
         run: node build.js
-                
+
       - name: Upload Artifact
         uses: tanyagray/action-upload-release-asset@v1.1.3
         env:
@@ -94,9 +94,9 @@ jobs:
     needs: [build, create-github-release]
     runs-on: ubuntu-latest
     steps:
-    - name: Publish Release
-      uses: eregon/publish-release@v1.0.3
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        release_id: ${{ needs.create-github-release.outputs.release_id}}
+      - name: Publish Release
+        uses: eregon/publish-release@v1.0.3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          release_id: ${{ needs.create-github-release.outputs.release_id}}
